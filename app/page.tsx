@@ -50,13 +50,16 @@ export default function UploadComponent() {
 
   const { uploadToS3 } = useS3Upload();
 
-  const handleFileChange = async (file: File) => {
-    let objectUrl = URL.createObjectURL(file);
-    setStatus("uploading");
-    setImageUrl(objectUrl);
-    const { url } = await uploadToS3(file);
-    setImageUrl(url);
-    setStatus("uploaded");
+  const handleFileChange = (file: File | File[]) => {
+    const singleFile = Array.isArray(file) ? file[0] : file;
+    (async () => {
+      let objectUrl = URL.createObjectURL(singleFile);
+      setStatus("uploading");
+      setImageUrl(objectUrl);
+      const { url } = await uploadToS3(singleFile);
+      setImageUrl(url);
+      setStatus("uploaded");
+    })();
   };
 
   async function createApp() {
